@@ -4,6 +4,7 @@ api.py用于创建活动窗口
 - 允许使用post和get方法进行调用
 - 需要预先安装 gpt4all package
   -  若无法运行,可以尝试挂梯子,似乎gpt4all库会与openai进行连接
+  -  gpt4all中embed会自动下载模型
 - 在python 3.12.1上能够成功运行
 # embed
 采用python
