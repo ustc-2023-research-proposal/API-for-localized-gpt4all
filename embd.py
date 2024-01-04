@@ -13,6 +13,7 @@ def PostEmbedding(text:str) :
     r = requests.post(url=url, data=data)
     return json.loads(r.text)
 
-print(getEmbedding('Hey? How are you?'))
+if __name__ == '__main__':
+    print(getEmbedding('Hey? How are you?'))
 
-print(PostEmbedding('maybe?'))
+    print(PostEmbedding('maybe?'))
