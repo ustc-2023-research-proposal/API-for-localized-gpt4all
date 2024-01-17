@@ -1,3 +1,5 @@
+# !!!
+**正在尝试使用docker来建立gpt4all镜像,其镜像的api编写完全按照openai官网提供的api来使用,便不需要使用gpt4all给python提供的函数重写api了**
 # API的创建
 1. 将api.py文件clone到本地
 2. 打开一个终端,并且需要在该终端上挂上梯子
@@ -18,8 +20,8 @@
 以及 [moderation](https://platform.openai.com/docs/guides/moderation/moderation) 的调用, 判断当前文本的道德程度?(是否有违禁词之类的)
 意味着其**仍然是使用openAI API来生成文本**的,但确实不清楚是在哪一方面使用该文本  
 
-现在能够完成使用gpt4all进行embedding操作,并且为了**不直接修改openai.ts的代码**,因此**采用了和openAI API一样的返回格式**  
-但是 Moderation 操作 并没有在 gpt4all的API中找到,似乎这是openai API中专门使用的功能  
+~现在能够完成使用gpt4all进行embedding操作,并且为了**不直接修改openai.ts的代码**,因此**采用了和openAI API一样的返回格式**~  
+~但是 Moderation 操作 并没有在 gpt4all的API中找到,似乎这是openai API中专门使用的功能~  
 即可能需要对源代码进行一定程度上的删减  
 
 而 Chat Completions的操作在gpt4all中存在该形式,只不过依然需要在 API 中编写响应的返回形式(gpt4all.doc)[https://docs.gpt4all.io/gpt4all_python.html#gpt4all.gpt4all.GPT4All.generate]
