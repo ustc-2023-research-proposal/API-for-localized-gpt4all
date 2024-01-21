@@ -2,6 +2,10 @@
 有一些想法,但还在尝试:
 1. ollama本来是在`localhost:11434`上能够直接调用,那么为什么需要使用ngrok来映射到公网ip中?
   - 我的猜想是:整个向ollama请求的过程会不会是在convex上执行的,而不是在本地请求了之后上传至convex中?
+    - 证明过程:
+        1. 在Convex官方给出的doc中.![Alt text](https://docs.convex.dev/assets/images/TutorialFigure0-47bd164e06a7396ba005666938c5005b.png)因此我认为其架构方式是通过convex官方的服务器来调用`function`中的`action`去请求其他cloud服务,即`other cloud services`,那么自然也不可能直接调用到前端`frontend`的api.
+        2. 在Convex的dashboard中可以找到其function目录,但是其中的一些函数是不能显示的`source code`,并且在更改`ai-town`本地文件时在其中会有一个上传的的过程.因此我认为这部分本地的代码可能上传到convex上运行的.
+        3. ollama的端口需要经过ngrok来映射到公网ip,可能是因为convex不能直接调用服务器的本地端口,而需要存在转发过程,否则便不需要ngrok来多此一举了.
   - 另外则是当时尝试直接将`openai.ts`中的`openai`的url改成本地的`127.0.0.1:6008`时,本地的访问中并没有观察到相应的请求出现,可能是因为这个请求本身不是在本地执行的?而是在convex上执行的,因此本地的api从未收到任何请求.
   - 而openai.com不会受到影响,因为是公网ip,convex能够访问到?因此可以直接调用openai的api来进行embedding?
   - **因此现在的尝试方向是将api的本地端口使用ngrok映射到公网上,来看看能否正常接受到请求**
