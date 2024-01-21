@@ -50,13 +50,6 @@ def embedding():
     return form_out(input,model)
 
 
-# 暂时不清楚其中存不存在这种功能
-@app.route('/moderation', methods=['get','post'])
-def moderation():
-    input = json.loads(request.form['input'])
-    pass
-
-
 def form_out(input, model) :
     data = []
     # 对传输进入的每一段文本都进行编号和embedding返回
