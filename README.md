@@ -9,6 +9,7 @@
   - 另外则是当时尝试直接将`openai.ts`中的`openai`的url改成本地的`127.0.0.1:6008`时,本地的访问中并没有观察到相应的请求出现,可能是因为这个请求本身不是在本地执行的?而是在convex上执行的,因此本地的api从未收到任何请求.
   - 而openai.com不会受到影响,因为是公网ip,convex能够访问到?因此可以直接调用openai的api来进行embedding?
   - **因此现在的尝试方向是将api的本地端口使用ngrok映射到公网上,来看看能否正常接受到请求**
+  - **已经成功了,看来必须将其放置于公网ip上才能访问到**
 2. 向ollama的fetch请求频繁的错误
    - 我在convex的log上观察到的`aiTown/agentOperations:agentGenerateMessage`的错误?
      - `failure Uncaught SyntaxError: Unexpected token < in JSON at position 0`
