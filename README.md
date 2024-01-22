@@ -93,9 +93,8 @@ bert_load_from_file: bert tokenizer vocab = 30522
 UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 804: forward compatibility was attempted on non supported HW (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:108.)
   return torch._C._cuda_getDeviceCount() > 0
 ```
-似乎是因为cuda的驱动版本不匹配,目前个人暂无解决方案  
-但仍然能够使用
-
+似乎是因为cuda的驱动版本不匹配,目前个人暂无解决方案[error](https://stackoverflow.com/questions/66371130/cuda-initialization-unexpected-error-from-cudagetdevicecount)
+但仍然能够使用,但是不能确定其是否在gpu上运行.
 # embed.py
 1. 在运行了api.py的前提下使用
 2. 函数传入的为string的数组
