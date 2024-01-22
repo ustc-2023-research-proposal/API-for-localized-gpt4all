@@ -20,7 +20,16 @@
 2. 在使用前需要先安装 flask 与 gpt4all 的python库, 才可以使用
 ```
 conda install flask
+##################
+使用gpt4all来进行embedding
 pip install gpt4all
+##################
+如果是使用BAAI来进行embedding的话请使用`api-for-bge-large-en-v1.5.py`
+目前在端口6009上运行,可以自行更改,同样需要使用代理
+第一次使用会自动下载模型
+pip install sentence-transformers
+##################
+
 ```
 等类似方法来进行安装.
 
