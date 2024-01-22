@@ -95,11 +95,20 @@ UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Di
 ```
 似乎是因为cuda的驱动版本不匹配,目前个人暂无解决方案  
 但仍然能够使用
+
 # embed.py
 1. 在运行了api.py的前提下使用
 2. 函数传入的为string的数组
+3. 如果需要测试,也可以使用
+4. 
 
-而 Chat Completions的操作在gpt4all中存在该形式,只不过依然需要在 API 中编写响应的返回形式(gpt4all.doc)[https://docs.gpt4all.io/gpt4all_python.html#gpt4all.gpt4all.GPT4All.generate]
+# 在openai.ts中的代码更改
+将78,79行中,将代码改为
+```
+    const openaiApiBase = process.env.OPENAI_API_BASE || '转发到公网的api端口(注意最后不能有'/')';
+    const apiUrl = openaiApiBase + '/embed';
+```
+将84行注销掉
 
 # !!!
 **正在尝试使用docker来建立gpt4all镜像,其镜像的api编写完全按照openai官网提供的api来使用,便不需要使用gpt4all给python提供的函数重写api了**
