@@ -16,7 +16,7 @@
      - 似乎是指出现了错误的 `<` 字符? 而这个字符不应该出现在json格式中,并且刚好出现在第0个位置
 
 # 使用
-1. 在python 3.12.1 中能够成功使用
+1. 在python 3.12.1 与 python 3.11.0 中能够成功使用
 2. 在使用前需要先安装 flask 与 gpt4all 的python库, 才可以使用
 ```
 conda install flask
@@ -28,6 +28,7 @@ pip install gpt4all
 目前在端口6009上运行,可以自行更改,同样需要使用代理
 第一次使用会自动下载模型
 pip install sentence-transformers
+需要使用 python version <= 3.11 版本来安装 sentence-transformers
 ##################
 
 ```
