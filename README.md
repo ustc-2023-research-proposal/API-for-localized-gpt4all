@@ -87,6 +87,14 @@ bert_load_from_file: bert tokenizer vocab = 30522
 7. 如果接收后但是没有正常返回,也可能是在请求过程中由于非法输入(鲁棒性很差,没有去检测非法输入)导致的api卡死,这点可以通过使用ctrl+c之后的返回结果来得到,如果发生错误会在ctrl+c后显示错误.
 8. 测试请使用embed.py进行,运行embed.py程序,如果能够正常返回embedding的结果,并且能在api界面观察到`127.0.0.1 - - [21/Jan/2024 17:18:40] "POST /embed HTTP/1.1" 200 -`则表明正常访问(请求成功的status为200)
 
+# 关于cuda
+目前在使用以pytorch为库的函数,在调用cuda是会报错
+```
+UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 804: forward compatibility was attempted on non supported HW (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:108.)
+  return torch._C._cuda_getDeviceCount() > 0
+```
+似乎是因为cuda的驱动版本不匹配,目前个人暂无解决方案  
+但仍然能够使用
 # embed.py
 1. 在运行了api.py的前提下使用
 2. 函数传入的为string的数组
