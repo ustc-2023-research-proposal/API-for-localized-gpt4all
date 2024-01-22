@@ -109,6 +109,49 @@ UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Di
     const apiUrl = openaiApiBase + '/embed';
 ```
 将84行注销掉
+```Javascript {.line-numbers}
+export async function fetchEmbeddingBatch(texts: string[]) {
+    assertOpenAIKey();
+  const {
+    result: json,
+    retries,
+    ms,
+  } = await retryWithBackoff(async () => {
+    const openaiApiBase = process.env.OPENAI_API_BASE || '转发到公网的api端口(注意最后不能有'/')'; // <----- 此处
+    const apiUrl = openaiApiBase + '/embed';   // <----- 此处
+    const result = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: 'Bearer ' + process.env.OPENAI_API_KEY,   // <----- 此处
+      },
 
+      body: JSON.stringify({
+        model: 'text-embedding-ada-002',
+        input: texts.map((text) => text.replace(/\n/g, ' ')),
+      }),
+    });
+    if (!result.ok) {
+      throw {
+        retry: result.status === 429 || result.status >= 500,
+        error: new Error(`Embedding failed with code ${result.status}: ${await result.text()}`),
+      };
+    }
+    return (await result.json()) as CreateEmbeddingResponse;
+  });
+  if (json.data.length !== texts.length) {
+    console.error(json);
+    throw new Error('Unexpected number of embeddings');
+  }
+  const allembeddings = json.data;
+  allembeddings.sort((a, b) => a.index - b.index);
+  return {
+    embeddings: allembeddings.map(({ embedding }) => embedding),
+    usage: json.usage.total_tokens,
+    retries,
+    ms,
+  };
+}
+``` 
 # !!!
 **正在尝试使用docker来建立gpt4all镜像,其镜像的api编写完全按照openai官网提供的api来使用,便不需要使用gpt4all给python提供的函数重写api了**
