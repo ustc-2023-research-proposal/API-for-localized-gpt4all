@@ -10,14 +10,34 @@
   - 而openai.com不会受到影响,因为是公网ip,convex能够访问到?因此可以直接调用openai的api来进行embedding?
   - **因此现在的尝试方向是将api的本地端口使用ngrok映射到公网上,来看看能否正常接受到请求**
   - **已经成功了,看来必须将其放置于公网ip上才能访问到**
-2. 向ollama的fetch请求频繁的错误
+
+# Ollama运行一段时间后会请求错误
+1. 向ollama的fetch请求频繁的错误
+   - **目前情况下,在ai-town运行约15分钟左右后便始终处于`fetch fail`的状态,目前具体情况不明**
    - 我在convex的log上观察到的`aiTown/agentOperations:agentGenerateMessage`的错误?
      - `failure Uncaught SyntaxError: Unexpected token < in JSON at position 0`
      - 似乎是指出现了错误的 `<` 字符? 而这个字符不应该出现在json格式中,并且刚好出现在第0个位置
 
 # 关于ngrok只能转发一个端口的解决方案
 1. 首先可以找一个熟悉的同学,然后一个人转发ollama的端口,一个人转发api的端口,两者都能够使用.
-2. 或者可以选择在本地装一个tmole然后将端口从服务器上转发到本地,再从本地转发到公网ip上
+2. 或者可以选择在本地装一个tmole然后将端口从服务器上转发到本地,再从本地转发到公网ip上(可以不使用ngrok)
+  1. 首先在本地电脑(区别于服务器)中安装nodejs
+  2. 使用nodejs安装tunnlemole
+  3. 输入`tmole <本地端口号>`来讲本地端口转发到公网上
+  4. 使用如ssh等(我使用的是vscode的remote ssh插件)转发服务器端口到本地端口
+    - 这边需要转发至少一个端口到本地(ollama 或 api 端口),也可以都使用tmole而不使用ngrok
+    - 使用`3`将端口号转发到公网ip上
+  5. 更新在convex中的环境变量
+    - 这里可以将比如78行处的openai网址改为环境变量`process.env.API_URL`,然后直接在convex的dashboard中更改`API_URL`环境变量即可
+    - 建议设置一个`embedding vector length`的的变量用于快捷修改embedding后的长度
+  7. convex需要有一个上传函数的过程,如果觉得源代码未上传,可以在更改后的代码界面尝试保存更改,应该会自动更新
+
+# embedding嵌入中产生的错误
+  1. 如果出现了 **行数不匹配** 的原因,需要修改`convex/agent/schema.ts`目录下43行处`dimensions: 1536,`的大小
+    - 这里是在检测api返回的embedding维度的大小,这边默认是1536,即openai的embedding的向量大小,将其改为api对应的模型的对应向量长度
+    - 这边给出可能使用到的大小
+      - BAAI:1024
+      - gpt4all:368
 
 # 使用
 1. 在python 3.12.1 与 python 3.11.0 中能够成功使用
@@ -54,13 +74,6 @@ pip install sentence-transformers
 
 4. 成功界面会类似于:
 ```
-bert_load_from_file: gguf version     = 2
-bert_load_from_file: gguf alignment   = 32
-bert_load_from_file: gguf data offset = 695552
-bert_load_from_file: model name           = BERT
-bert_load_from_file: model architecture   = bert
-bert_load_from_file: model file type      = 1
-bert_load_from_file: bert tokenizer vocab = 30522
  * Serving Flask app 'api'
  * Debug mode: on
 WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
@@ -91,14 +104,6 @@ bert_load_from_file: bert tokenizer vocab = 30522
 7. 如果接收后但是没有正常返回,也可能是在请求过程中由于非法输入(鲁棒性很差,没有去检测非法输入)导致的api卡死,这点可以通过使用ctrl+c之后的返回结果来得到,如果发生错误会在ctrl+c后显示错误.
 8. 测试请使用embed.py进行,运行embed.py程序,如果能够正常返回embedding的结果,并且能在api界面观察到`127.0.0.1 - - [21/Jan/2024 17:18:40] "POST /embed HTTP/1.1" 200 -`则表明正常访问(请求成功的status为200)
 
-# 关于cuda
-目前在使用以pytorch为库的函数,在调用cuda是会报错
-```
-UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 804: forward compatibility was attempted on non supported HW (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:108.)
-  return torch._C._cuda_getDeviceCount() > 0
-```
-似乎是因为cuda的驱动版本不匹配,目前个人暂无解决方案[error](https://stackoverflow.com/questions/66371130/cuda-initialization-unexpected-error-from-cudagetdevicecount)
-但仍然能够使用,但是不能确定其是否在gpu上运行.
 # embed.py
 1. 在运行了api.py的前提下使用
 2. 函数传入的为string的数组
@@ -112,6 +117,8 @@ UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Di
     const apiUrl = openaiApiBase + '/embed';
 ```
 将84行注销掉
+
+最后的结果应当如下所示:
 ```Javascript {.line-numbers}
 export async function fetchEmbeddingBatch(texts: string[]) {
     assertOpenAIKey();
@@ -120,7 +127,7 @@ export async function fetchEmbeddingBatch(texts: string[]) {
     retries,
     ms,
   } = await retryWithBackoff(async () => {
-    const openaiApiBase = process.env.OPENAI_API_BASE || '转发到公网的api端口(注意最后不能有'/')'; // <----- 此处
+    const openaiApiBase = process.env.OPENAI_API_BASE || '转发到公网的api端口(注意最后不能有'/')'; // <----- 此处,或者采用环境变量的方式来改变亦可
     const apiUrl = openaiApiBase + '/embed';   // <----- 此处
     const result = await fetch(apiUrl, {
       method: 'POST',
@@ -156,5 +163,3 @@ export async function fetchEmbeddingBatch(texts: string[]) {
   };
 }
 ``` 
-# !!!
-**正在尝试使用docker来建立gpt4all镜像,其镜像的api编写完全按照openai官网提供的api来使用,便不需要使用gpt4all给python提供的函数重写api了**
