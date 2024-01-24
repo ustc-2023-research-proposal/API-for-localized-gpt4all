@@ -43,7 +43,7 @@
     - 这里是在检测api返回的embedding维度的大小,这边默认是1536,即openai的embedding的向量大小,将其改为api对应的模型的对应向量长度
     - 这边给出可能使用到的大小
       - BAAI:1024
-      - gpt4all:368
+      - gpt4all:384
 
 # 使用
 1. 在python 3.12.1 与 python 3.11.0 中能够成功使用
