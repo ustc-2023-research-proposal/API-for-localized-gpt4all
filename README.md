@@ -15,6 +15,10 @@
      - `failure Uncaught SyntaxError: Unexpected token < in JSON at position 0`
      - 似乎是指出现了错误的 `<` 字符? 而这个字符不应该出现在json格式中,并且刚好出现在第0个位置
 
+# 关于ngrok只能转发一个端口的解决方案
+1. 首先可以找一个熟悉的同学,然后一个人转发ollama的端口,一个人转发api的端口,两者都能够使用.
+2. 或者可以选择在本地装一个tmole然后将端口从服务器上转发到本地,再从本地转发到公网ip上
+
 # 使用
 1. 在python 3.12.1 与 python 3.11.0 中能够成功使用
 2. 在使用前需要先安装 flask 与 gpt4all 的python库, 才可以使用
