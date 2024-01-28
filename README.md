@@ -1,4 +1,5 @@
 # 实验结果
+最近的在那个[task-and-result.md](https://github.com/ustc-2023-research-proposal/API-for-localized-gpt4all/blob/main/task-and-result.md)里面
 ~~有一些想法,但还在尝试:~~  
 正在写一从convex中读取数据的程序,希望能以更加整洁合适的表格形式来呈现对话内容,并且将对话结果存储在本地下以便得出实验结论.  
 
