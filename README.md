@@ -29,7 +29,7 @@
 1. 首先可以找一个熟悉的同学,然后一个人转发ollama的端口,一个人转发api的端口,两者都能够使用.
 2. 或者可以选择在本地装一个tmole然后将端口从服务器上转发到本地,再从本地转发到公网ip上(可以不使用ngrok)
   1. 首先在本地电脑(区别于服务器)中安装nodejs
-  2. 使用nodejs安装tunnlemole
+  2. 使用nodejs安装tunnelmole
   3. 输入`tmole <本地端口号>`来讲本地端口转发到公网上
   4. 使用如ssh等(我使用的是vscode的remote ssh插件)转发服务器端口到本地端口
     - 这边需要转发至少一个端口到本地(ollama 或 api 端口),也可以都使用tmole而不使用ngrok
